@@ -1,0 +1,130 @@
+James Wu
+Project 4
+5/1/22
+
+Project 4 Report
+
+A.
+Some notable obstacles I overcame included the implementation of functions "removeDups", "subsequence", and "makeMerger". These functions challenged me conceptually-- I could not determine the best method to return the arguments as specified (or rearrange contents of an array as specified) until after much thought.
+
+For the removeDups function, I was unsure how to iterate over the array such that consecutive elements would be removed-- but also allow for later repeats of the same element (just not consecutively). After much experimentation, I solved the problem by writing out example arrays in a notebook and tracing out how I could manipulate the elements to only keep the retained items as specified. I did so by moving duplicates to the end of the array, and tracking the index of how many indexes were removed and adjusting the new "endpoint" of the array accordingly. This made use of another preexisting function "moveToEnd".
+
+As for the subsequence function, because the nature of the function required that we determine if elements in a2 appeared in the same order in a1, I could not think of how to iterate through one array while checking the indices of another simultaneously. Every method I thought of-- such as nested for loops-- did not account for the fact that these elements did NOT need to be consecutive. I finally resolved the problem by using a variable to act as the index for array a2, and then incrementing the index if the entry was found in a1. This way, I could iterate through a1 entirely and also check elements of a2.
+
+My last notable challenge was implementing the makeMerger function, which I eventually resolved through the use of basic sorting of an array. My first issue was how to compare elements in both arrays to one another, if they were different arrays. I solved this by appending all elements of each array to the results array. Then, to arrange elements in nondecreasing order, I spent a significant amount of time trying to find a way to sort items within the array. I finally did so by iterating through each item of the array and swapping items such that the smallest value would be brought to the front of the array when found-- repeating this process for every index increment. As a result, the final product was a completely sorted array in nondecreasing order.
+
+
+
+B.
+All test cases should handle as expected. 
+
+     //enumerate Test
+    string enumerateArray[10] = {"James", "jAmEs", "David", "Nicole", "Ashley", "Phillip", "Phillip", "Phillip"};
+    assert(enumerate(enumerateArray, -1, "James") == -1); // Test negative case
+    assert(enumerate(enumerateArray, 0, "James") == 0); // Test 0 case
+    assert(enumerate(enumerateArray, 3, "James") == 1); // Test for case
+    assert(enumerate(enumerateArray, 3, "Ashley") == 0); // Test for range
+    assert(enumerate(enumerateArray, 10, "Ashley") == 1);
+    assert(enumerate(enumerateArray, 10, "Phillip") == 3);
+    assert(enumerate(enumerateArray, 10, "jAmEs") == 1);
+    
+    //findMatch Test
+    string findMatchArray[10] = {"James", "jAmEs", "David", "Nicole", "Ashley", "Phillip", "Phillip", "Phillip"};
+    assert(findMatch(findMatchArray, -1, "James") == -1); // Test negative case
+    assert(findMatch(findMatchArray, 0, "James") == 0); // Test 0 case
+    assert(findMatch(findMatchArray, 3, "James") == 0); // Test for case
+    assert(findMatch(findMatchArray, 3, "Nicole") == -1); // Test for no string found in range
+    assert(findMatch(findMatchArray, 10, "Phillip") == 5); // Test for multiple repeats
+    assert(findMatch(findMatchArray, 10, "Nicole") == 3);
+    assert(findMatch(findMatchArray, 10, "jAmEs") == 1);
+    
+    //findRun Test
+    string findRunArray[10] = {"James", "James", "jAmEs", "James", "James", "Phillip", "Phillip", "Phillip"};
+    int b = 999;
+    int e = -999;
+    assert(findRun(findRunArray, -1, "James", b, e) == false); // Test negative case
+    assert(findRun(findRunArray, 0, "James", b, e) == false); // Test 0 case
+    assert(findRun(findRunArray, 3, "James", b, e) == true && b == 0 && e == 1); // Test for case
+    assert(findRun(findRunArray, 10, "James", b, e) == true && b == 0 && e == 1); // Test for multiple consecutive strings
+    assert(findRun(findRunArray, 10, "Phillip", b, e) == true && b == 5 && e == 7);
+    assert(findRun(findRunArray, 10, "Ashley", b, e) == false && b == 5 && e == 7); // Test for string not found
+    
+    //findMin Test
+    string findMinArray[5] = {"Kaylyn", "Eric", "Eugene", "Nareh", "Eric"};
+    assert(findMin(findMinArray, -1) == -1); // Test negative case
+    assert(findMin(findMinArray, 0) == -1); // No elements part of the array
+    assert(findMin(findMinArray, 5) == 1); // Test for multiple occurrences
+    assert(findMin(findMinArray, 4) == 1);
+    
+    //moveToEnd Test
+    string moveToEnd1[5] = {"Kaylyn", "Eric", "Eugene", "Nareh", "James"};
+    assert(moveToEnd(moveToEnd1, -1, 2) == -1); // Test negative case
+    assert(moveToEnd(moveToEnd1, 0, 2) == -1); // Test 0 case
+    assert(moveToEnd(moveToEnd1, 5, 2) == 2 && moveToEnd1[4] == "Eugene");
+    assert(moveToEnd(moveToEnd1, 5, 0) == 0 && moveToEnd1[4] == "Kaylyn");
+    assert(moveToEnd(moveToEnd1, 5, 4) == 4 && moveToEnd1[4] == "Kaylyn"); // Test moving last element to end again
+    
+    //moveToBeginning Test
+    string moveToBeginning1[5] = {"Kaylyn", "Eric", "Eugene", "Nareh", "James"};
+    assert(moveToBeginning(moveToBeginning1, -1, 2) == -1); // Test negative case
+    assert(moveToBeginning(moveToBeginning1, 0, 2) == -1); // Test 0 case
+    assert(moveToBeginning(moveToBeginning1, 5, 2) == 2);
+    assert(moveToBeginning(moveToBeginning1, 5, 4) == 4 && moveToBeginning1[0] == "James");
+    assert(moveToBeginning(moveToBeginning1, 5, 0) == 0 && moveToBeginning1[0] == "James"); // Test moving first element to end again
+    
+    //findDifference Test
+    string array1[5] = {"James", "Phillip", "Luke", "Aaron", "Erin"};
+    string array2[5] = {"James", "Jaclyn", "Phillip", "Luke", "Aaron"};
+    string array3[5] = {"James", "Phillip", "Luke", "Aaron", "Aaron"};
+    assert(findDifference(array1, -1, array2, 5) == -1); // Test negative case
+    assert(findDifference(array1, 5, array2, -1) == -1); // Test negative case
+    assert(findDifference(array1, 0, array2, 0) == 0); // Test 0 case
+    assert(findDifference(array1, 5, array2, 0) == 0); // Test 0 case
+    assert(findDifference(array1, 5, array2, 5) == 1);
+    assert(findDifference(array1, 5, array3, 5) == 4);
+    
+    //removeDups Test
+    string removeDupsArray[10] = {"James", "James", "James", "Mario", "Mario", "Luigi", "Luigi", "Thomas", "James", "James"};
+    string removeDupsArray1[10] ={"James", "James", "Mario", "James", "James", "Mario", "James", "James", "Mario", "Mario"};
+    assert(removeDups(removeDupsArray, -1) == -1); // Test negative case
+    assert(removeDups(removeDupsArray, 0) == 0); // Test 0 case
+    assert(removeDups(removeDupsArray, 10) == 5 && removeDupsArray[0] == "James" && removeDupsArray[1] == "Mario" && removeDupsArray[2] == "Luigi" && removeDupsArray[3] == "Thomas" && removeDupsArray[4] == "James");
+    assert(removeDups(removeDupsArray1, 10) == 6);
+    
+    //subsequence Test
+    string s1[5] = {"James", "Kat", "Alex", "Phillip", "Dom"};
+    string s2[3] = {"James", "Phillip", "Dom"};
+    string s3[6] = {"One", "Two", "Three", "Kat", "Alex", "Six"};
+    assert(subsequence(s1, -1, s2, 0) == false); // Test negative case
+    assert(subsequence(s1, 0, s2, -1) == false); // Test negative case
+    assert(subsequence(s1, 0, s2, 0) == true); // Test 0 case
+    assert(subsequence(s1, 5, s2, 3) == true);
+    assert(subsequence(s1, 5, s3, 6) == false); // Test different bounds
+    assert(subsequence(s1, 5, s3, 5) == false);
+    
+    //makeMerger Test
+    string x[5] = { "amy", "elena", "elena", "ketanji", "samuel" };
+    string x1[5] = {"elena", "ketanji", "bob", "amy", "samuel"};
+    string y[4] = { "clarence", "elena", "john", "sonia" };
+    string z[20];
+    assert(makeMerger(x, -1, y, -1, z, 20) == -1); // Test negative case
+    assert(makeMerger(x, 0, y, -1, z, 20) == -1); // Test negative case
+    assert(makeMerger(x, -1, y, 0, z, 20) == -1); // Test negative case
+    assert(makeMerger(x, 0, y, 0, z, -1) == -1); // Test negative case
+    assert(makeMerger(x, 0, y, 0, z, 20) == -1); // Test 0 case
+    assert(makeMerger(x, 5, y, 4, z, 20)==9);
+    assert(makeMerger(x1, 5, y, 4, z, 20)== -1); // Test case where array is not nondecreasing
+    assert(makeMerger(x, 5, y, 4, z, 3)==-1); // Test case where results have more than max elements
+
+    //divide Test
+    string dividerTest[5] = {"e", "k", "b", "a", "s"};
+    assert(divide(dividerTest, -1, "c") == -1); // Test negative case
+    assert(divide(dividerTest, 0, "c") == 0); // Test 0 case
+    assert(divide(dividerTest, 5, "c") == 2);
+    assert(divide(dividerTest, 5, "z") == 5); // Test if no item greater than divider
+    assert(divide(dividerTest, 5, "m") == 4);
+    
+    cout << "All tests successful" << endl;
+    
+
+These tests, as well as all tests provided in the spec, should work as expected and can be used to test the program.

@@ -1,0 +1,238 @@
+James Wu
+CS31
+5/15/22
+
+********** Project 5 Report **********
+
+A. The most notable challenges I overcame all involved manipulating C-Strings to some extent, or more specifically, iterating through arrays of C-Strings. I had substantial difficulty attempting to determine how to iterate over a collection of standards in the determineMatchLevel function especially for multiple consecutive spaces in the jeet. Additionally, figuring out how to remove an entire standard in the editStandards function was a tough problem as well for me, because I could not determine how to remove a collection in total (since each aspect of each collection was stored in three separate arrays). 
+
+For the first problem in the determineMatchLevel function, I found a solution by physically diagramming out what should happen when an array was iterated over, using some example arrays I came up with as a reference. I eventually settled on the approach to store all the words in the jeet into a separate array called "wordsArray". Then, I iterated over the amount of standards in the entire collection-- comparing word1 against each word in "wordsArray" to see if it was present in the jeet. If so, I'd then check the next "distance" amount of words to see if word2 was present as well, and increment a counter for every match standard that I found. Even during this process, I encountered issues that took significant amount of time to resolve. The most notable of these was storing the current word of the array-- sometimes, I'd store a word but then after running assertions, I found that the C-String that should've destructed at the end of the loop remained! It took me ages to find out why, but I finally realized it was because I didn't initialize the temporary array to the null byte. I thought that the array would instantly be initialized to null, which was a mistake on my part, and upon fixing it, the program then worked as I intended.
+
+As for the second problem in the editStandards function, I resolved this issue by iterating over each array separately, but editing all three arrays if an invalid entry was detected. For example, first I iterated over the distance array. If I encountered a negative number, then I shifted everything in all three arrays over that invalid position, and kept track of the new length of the array. Then, I iterated over word1 array, and did the same process if I found a non-alphabetical character. And the same for word 2 as well. By the end, all invalid entries would have been removed.
+
+
+
+B. (Note to grader: if the formatting looks weird, it may help to fullscreen this text file.)
+
+editStandards function pseudocode:
+
+Repeatedly, for the amount of standards in the collection:
+
+	check if distance is negative, if word 1 is a space, or if word 2 is a space.
+		If so, for the amount of standards in the collection, move every item in every array to the left by one, deleting the current collection.
+		Decrement the amount of standards by one, since one less item will be returned.
+		Continue-- that is, skip the rest of the current iteration of the loop and continue on.
+
+	Repeatedly iterate over every character in word1.
+		If the word is non-alphabetic:
+			move every item in every array to the left by one, deleting the current collection.
+			Decrement the amount of standards by one, since one less item will be returned.
+			Continue-- that is, skip the rest of the current iteration of the loop and continue on.
+		Otherwise, make the current character lowercase.
+
+	
+	Repeatedly iterate over every character in word2.
+		If the word is non-alphabetic:
+			move every item in every array to the left by one, deleting the current collection.
+			Decrement the amount of standards by one, since one less item will be returned.
+			Continue-- that is, skip the rest of the current iteration of the loop and continue on.
+		Otherwise, make the current character lowercase.
+	
+
+Repeatedly, for one less than the amount of standards in the collection and starting at a variable I'll refer to here as "index":
+	
+	Repeatedly, for the amount of standards in the collection and starting at one more than "index":
+		
+		If word 1 and word 2 are equal at both indexes, meaning there's a duplicate collection:
+			Store the index position of the collection that has a smaller "distance" value.
+
+			Repeatedly, for one less than the amount of standards in the collection:
+				move every item in every array to the left by one, deleting the current collection.
+			Decrement the amount of standards by one, since one less item will be returned.
+			Continue-- that is, skip the rest of the current iteration of the loop and continue on.
+		
+			
+Return the total amount of standards remaining.
+
+
+
+determineMatchLevel function pseudocode:
+
+	Declare an array of C-Strings that can fit the max amount of max length strings. I will refer to this as "wordsArray".
+	For every entry in the array, initialize the entry to the zero byte "\0".
+
+	Declare a C-String to hold the current word of the jeet, initializing it to the zero byte. I will refer to this as "currentWord".
+
+	Repeatedly, for every character in the jeet:
+		If the character is alphabetical, append the lowercase version of it to "currentWord".
+		Otherwise, if the character is a space or the zero byte:
+			Append the zero byte to "currentWord".
+			Append "currentWord" to "wordsArray".
+		Otherwise, the character is a number, symbol, or consecutive space. Continue-- that is, skip the rest of the current iteration of the loop and continue on.
+
+
+
+	//At this point, every word in the jeet is contained in "wordsArray".
+
+
+
+	Repeatedly, for the amount of standards:
+		Repeatedly, for the max amount of words in a jeet:
+			If the index in wordsArray is a space, break out of the loop. This is because the jeet is at its end.
+			Otherwise, if word1 is found in the current index of wordsArray:
+				Repeatedly, for "distance" amount of times:
+					If the current index of wordsArray equals word2:
+						Increment total matches
+						break out of all loops except the topmost loop.
+
+
+	Return the total amount of matches.
+
+
+
+C. Here is my comprehensive list of test code that I used to debug the program. Something important to note is that for some of the cases for testing editStandards, I commented out other assertions to test them one by one. This is because the editStandards function actually edits the contents of the array, so in order to test efficiently without redeclaring arrays over and over, I simply just commented out assertions one by one to test specific things. My program should be able to handle all test cases correctly.
+
+List of test code:
+
+//EDIT STANDARDS FUNCTION TEST
+    //Remove standards where distance is not positive, word contains no characters, contains a character that isn't a letter, and duplicate standards.
+    //Return amount of number of standards in set
+    const int EDITSTANDARDS_NSTANDARDS = 10;
+    int editStandardsDistance[EDITSTANDARDS_NSTANDARDS] = {4, 10, 2, 0, -1, 5, 1, 2, 60, 22};
+    char word1[EDITSTANDARDS_NSTANDARDS][MAX_WORD_LENGTH + 1] = {"Super", "Duper", "Awesome", "super", "f&mily", "", "", "12324", "super", "hello" };
+    char word2[EDITSTANDARDS_NSTANDARDS][MAX_WORD_LENGTH + 1] = {"man", "california", "8wesome", "hii", "boogie", "po", "panda_", "thisIsValid?", "trebuchet", "simp" };
+    assert(editStandards(editStandardsDistance, word1, word2, EDITSTANDARDS_NSTANDARDS) == 5);
+//    //Print array to see if contents have been shifted
+//    for(int i = 0; i < EDITSTANDARDS_NSTANDARDS; i++){
+//        cout << editStandardsDistance[i] << " " << word1[i] << " " << word2[i] << endl;
+//    }
+    
+    //These tests test nonpositive distances for editStandards
+    const int nStandards = 5;
+    int editStandardsDistance1[nStandards] = {0, 1, -1, 2, -3};
+    int editStandardsDistance2[nStandards] = {-1, 0, 0, 3, 5};
+    int editStandardsDistance3[nStandards] = {-1, -2, -3, -4, -5};
+    char case1Word1[nStandards][MAX_WORD_LENGTH + 1] = {"hi", "this", "is", "very", "valid"};
+    char case1Word2[nStandards][MAX_WORD_LENGTH + 1] = {"yes", "this", "is", "valid", "string"};
+    //Comment out the assertion you want to test (that way you can see one by one if it's valid, or else the array will get shifted around)
+//    assert(editStandards(editStandardsDistance1, case1Word1, case1Word2, nStandards) == 3);
+//    for(int i = 0; i < nStandards; i++){
+//        cout << editStandardsDistance1[i] << " " << case1Word1[i] << " " << case1Word2[i] << endl;
+//    }
+    
+//    assert(editStandards(editStandardsDistance2, case1Word1, case1Word2, nStandards) == 4);
+//    for(int i = 0; i < nStandards; i++){
+//        cout << editStandardsDistance2[i] << " " << case1Word1[i] << " " << case1Word2[i] << endl;
+//    }
+//
+//    assert(editStandards(editStandardsDistance3, case1Word1, case1Word2, nStandards) == 0);
+//    for(int i = 0; i < nStandards; i++){
+//        cout << editStandardsDistance1[i] << " " << case1Word1[i] << " " << case1Word2[i] << endl;
+//    }
+//    assert(editStandards(editStandardsDistance1, case1Word1, case1Word2, -5) == 0); //Test nStandards negative-- should equal 0
+
+    //Test empty string
+    char empty[nStandards][MAX_WORD_LENGTH+1] = {"", "Hi", "", "", "lol"};
+    char empty2[nStandards][MAX_WORD_LENGTH+1] = {"", "", "", "", ""};
+    char nonEmptyWord2[nStandards][MAX_WORD_LENGTH+1] = {"a", "b", "c", "d", "e"};
+    int validDist[nStandards] = {1, 2, 3, 4, 5};
+    //Comment out the assertions you want to test
+//    assert(editStandards(validDist, empty, nonEmptyWord2, nStandards) == 2);
+//    for(int i = 0; i < nStandards; i++){
+//        cout << validDist[i] << " " << empty[i] << " " << nonEmptyWord2[i] << endl;
+//    }
+//    assert(editStandards(validDist, empty2, nonEmptyWord2, nStandards) == 0);
+//    for(int i = 0; i < nStandards; i++){
+//        cout << validDist[i] << " " << empty2[i] << " " << nonEmptyWord2[i] << endl;
+//    }
+    
+    //Test non-alpha chars
+    int newDist[3] = {5, 6, 20};
+    char nonAlpha1[3][MAX_WORD_LENGTH+1] = {"&Hi", "1234", "Test_HI"};
+    char nonAlpha2[3][MAX_WORD_LENGTH+1] = {"valid", "not valid", "thisValid"};
+    char alpha[3][MAX_WORD_LENGTH+1] = {"valid", "valid", "valid"};
+    //Comment out assertions you want to test
+//    assert(editStandards(newDist, nonAlpha1, alpha, 3) == 0);
+//    for(int i = 0; i < 3; i++){
+//        cout << newDist[i] << " " << nonAlpha1[i] << " " << alpha[i] << endl;
+//    }
+    
+//    assert(editStandards(newDist, nonAlpha2, alpha, 3) == 2);
+//    for(int i = 0; i < 3; i++){
+//        cout << newDist[i] << " " << nonAlpha2[i] << " " << alpha[i] << endl;
+//    }
+    
+    //Test duplicate w1 and w2
+    int dupDist[6] = {5, 10, 15, 20, 25, 100};
+    char word1Dup1[6][MAX_WORD_LENGTH+1] = {"I", "Am", "super", "happy", "I", "Am"};
+    char word2Dup1[6][MAX_WORD_LENGTH+1] = {"or", "am", "I", "test", "or", "Am"};
+    char word1Dup2[6][MAX_WORD_LENGTH+1] = {"Boot", "foot", "Boot", "foot", "Boot", "foot"};
+    char word2Dup2[6][MAX_WORD_LENGTH+1] = {"Foot", "Boot", "FOOT", "FOOT", "Boot", "foot"};
+    //Comment out assertions you want to test
+//    assert(editStandards(dupDist, word1Dup1, word2Dup1, 6) == 4);
+//    for(int i = 0; i < 6; i++){
+//        cout << dupDist[i] << " " << word1Dup1[i] <<" " << word2Dup1[i]<<endl;
+//    }
+    
+//    assert(editStandards(dupDist, word1Dup2, word2Dup2, 6) == 4);
+//    for(int i = 0; i < 6; i++){
+//        cout << dupDist[i] << " " << word1Dup2[i] <<" " << word2Dup2[i]<<endl;
+//    }
+
+    
+    //DETERMINE MATCH LEVEL FUNCTION TEST
+    //Return match level of the jeet, treating uppercase chars as lowercase and ignoring non-alphabetic characters
+    const int TEST1_NSTANDARDS = 4;
+    int test1dist[TEST1_NSTANDARDS] = {
+        2,             4,         1,         13
+    };
+    char test1w1[TEST1_NSTANDARDS][MAX_WORD_LENGTH+1] = {
+        "eccentric",   "space",  "electric", "were"
+    };
+    char test1w2[TEST1_NSTANDARDS][MAX_WORD_LENGTH+1] = {
+        "billionaire", "capsule", "car",     "eccentric"
+    };
+    
+    assert(determineMatchLevel(test1dist, test1w1, test1w2, TEST1_NSTANDARDS,
+        "The eccentric outspoken billionaire launched a space station cargo capsule.") == 2);
+
+    assert(determineMatchLevel(test1dist, test1w1, test1w2, TEST1_NSTANDARDS,
+        "The eccentric outspoken billionaire launched    a space capsule.") == 2);
+
+    assert(determineMatchLevel(test1dist, test1w1, test1w2, TEST1_NSTANDARDS,
+        "**** 2022 ****") == 0);
+    
+    assert(determineMatchLevel(test1dist, test1w1, test1w2, TEST1_NSTANDARDS,
+        "  It's an ELECTRIC car!") == 1);
+    
+    assert(determineMatchLevel(test1dist, test1w1, test1w2, TEST1_NSTANDARDS,
+        "space space capsule space capsule capsule") == 1);
+
+    assert(determineMatchLevel(test1dist, test1w1, test1w2, TEST1_NSTANDARDS,
+        "Two eccentric billionaires were space-capsule riders.") == 0);
+    
+    
+    //Custom cases with more jeets
+    const int TEST2_NSTANDARDS = 8;
+    int test2dist[TEST2_NSTANDARDS] = {2, 30, 2, 3, 2, 3, 10, 3};
+    char test2w1[TEST2_NSTANDARDS][MAX_WORD_LENGTH+1] = {
+        "have",   "you",  "i", "d123arth", "wise", "thought", "not", "tragedy"
+    };
+    char test2w2[TEST2_NSTANDARDS][MAX_WORD_LENGTH+1] = {
+        "heard", "i", "thought", "the", "i", "not", "have", "you"
+    };
+    assert(determineMatchLevel(test2dist, test2w1, test2w2, TEST2_NSTANDARDS, "Have you heard the tragedy of Darth Plagueis the wise? I thought not.") == 5);
+    
+    const int TEST3_NSTANDARDS = 3;
+    int test3dist[TEST3_NSTANDARDS] = {1, 2, 3};
+    char test3w1[TEST3_NSTANDARDS][MAX_WORD_LENGTH + 1] = {"hi", "how", "hi"};
+    char test3w2[TEST3_NSTANDARDS][MAX_WORD_LENGTH + 1] = {"there", "how", "you"};
+    
+//    cout << determineMatchLevel(test3dist, test3w1, test3w2, TEST3_NSTANDARDS, "Hi there how are you") << endl;
+    
+    assert(determineMatchLevel(test3dist, test3w1, test3w2, TEST3_NSTANDARDS, "Hi there how are you") == 1);
+    
+    cout << "All tests succeeded" << endl;
+
+
+

@@ -1,0 +1,137 @@
+James Wu
+CS31
+4/24/22
+
+Project 3 Report
+
+A.
+I found this project challenging, but also very interesting and fun to work on. Some notable obstacles I encountered include identifying the difference between a sustained beat being interrupted and a tune ending prematurely, ensuring that the program could discern a specified amount of beats in the double digits, and assigning "badBeats" the correct beat number-- especially for cases 2 and 4-- without any "off-by-one" errors. (Case 2 and 4 refer to the conditions where convertTune returns 2 and 4, respectively.)
+
+For the first issue, I found a solution by testing if the given sustained beat would iterate to an index past the length of the overall tune-- which would imply that there should've been more beats, but the tune ended prematurely. For the second issue, determining beats for double digits, I resolved this by testing whether the next character after an initial digit was another digit. If it was, I multiplied the current digit by 10 and added the second digit to it, to accurately store the amount of beats that the program should be searching for. And lastly, I resolved the final noted obstacle by iterating through the tune for the amount of beats expected, incrementing a counter for each "successful" beat. When an error was detected during this process, I then added one to the counter (to set the index properly to the location that the beat SHOULD'VE been) and returned the appropriate value based on what kind of error was detected.
+
+B. 
+(Note for graders: I'm not sure how this formatting will look on your screen, but if it looks weird it might be easier to read if you expand your window.)
+
+High-level description:
+The main function is where beats can be called for conversion using function "convertTune".
+Function "convertTune" first checks whether the tune passed is convertible. It does this by calling "hasProperSyntax", and then tests for miscellaneous cases after. If the tune is convertible, then convertTune returns 0 and sets "instructions" to the properly converted tune.
+
+********** Pseudocode for Project 3 ***********************************************************************************************************************************************************************************
+
+function: hasProperSyntax
+	Repeatedly:
+		Check each character in tune.
+	If there is any white space in tune, return false.
+
+	Repeatedly:
+		Check each character in tune.
+		Make sure every number is either a double or single digit, and followed by a slash. If it isn’t, return false.		
+		See if the character is a valid beat. If it isn’t, return false.
+	
+	return true if the entire string has been iterated through without any issues.
+
+
+
+function: convertTune
+
+	Check if tune has proper syntax, return 1 if not.
+	Repeatedly:
+		Check each character in tune.
+		Increment beat counter if current character is slash.
+		Otherwise, if current character is digit, store value of the digit.
+			If a sustained beat has length less than 2, return 3 and assign the badBeat to the index. Otherwise there's a double digit, store the value for next iteration.
+			Otherwise:
+				Calculate the number of the specified beat using stored values.
+				Test if the number is "00", return 3 and assign badBeat to index if true. (This is a specific test case the following code doesn't catch.)
+				Repeatedly for the number of specified beats:
+					Check the character at the specified index of tune.
+					Increment a temporary beat counter, that will be used to help determine badBeat if necessary.
+					If the slashes end prematurely and go out of bounds, assign badBeat to index where beat should be and return 4.					
+					Otherwise, if the next character in the tune isn't a slash, assign badBeat to index where beat should be and return 2.
+					Increment index.
+					
+	
+	//If the code is running here, the tune must be convertible.
+	Repeatedly:
+		Check each character in tune.
+		If the character is a non-sustained note, append the appropriate lowercase letter to instructions.
+		Otherwise if the character is a sustained note, store the appropriate capital letter.
+			Check if the sustained note has double digits, and store the correct value.
+			Repeatedly for the number of specified beats:
+				Append the stored capital letter to instructions.
+	
+	return 0.
+
+Make calls to convertTune in main.
+
+***********************************************************************************************************************************************************************************************************************
+
+C.
+All cases should be able to run successfully with my program. Here are some of the tests I have used:
+ 
+    string instructions = "Default";
+    int badBeat = -999;
+    
+   //Test whitespace
+       string test1 = "";
+       string test2 = "     ";
+    
+    assert(convertTune(test1, instructions, badBeat) == 0 && instructions == "" && badBeat == -999);
+    
+    instructions = "Default";
+    
+    assert(convertTune(test2, instructions, badBeat) == 1 && instructions == "Default" && badBeat == -999);
+
+    instructions = "Default";
+    badBeat = -999;
+    
+   //Case 1: syntactically incorrect
+       string test3 = "lol";
+       string test4 = "r/3o/y";
+    
+    assert(convertTune(test3, instructions, badBeat) == 1 && instructions == "Default" && badBeat == -999);
+    assert(convertTune(test4, instructions, badBeat) == 1 && instructions == "Default" && badBeat == -999);
+    
+   //Case 2: Different beat detected during sustained beat
+       string test5 = "r/Y/g3///o5//r/g6//////o2//y/";
+       string test6 = "r3//y/b2//o2//";
+    
+    assert(convertTune(test5, instructions, badBeat) == 2 && instructions == "Default" && badBeat == 8);
+    assert(convertTune(test6, instructions, badBeat) == 2 && instructions == "Default" && badBeat == 3);
+
+    badBeat = -999;
+    
+   //Case 3: Sustained beat has length less than 2
+       string test7 = "o2//y00/r6//////";
+       string test8 = "r5/////G/b1//o/";
+    
+    assert(convertTune(test7, instructions, badBeat) == 3 && instructions == "Default" && badBeat == 3);
+    assert(convertTune(test8, instructions, badBeat) == 3 && instructions == "Default" && badBeat == 7);
+
+    badBeat = -999;
+    
+   //Case 4: Tune ends prematurely
+       string test9 = "o2//y8////";
+       string test10 = "g/B/O/r/b5//";
+    
+    assert(convertTune(test9, instructions, badBeat) == 4 && instructions == "Default" && badBeat == 7);
+    assert(convertTune(test10, instructions, badBeat) == 4 && instructions == "Default" && badBeat == 7);
+
+    badBeat = -999;
+
+   //Case 0: Convertible tune
+       string test11 = "G/";
+       string test12 = "///";
+       string test13 = "r/Y/g6//////y10//////////r4////";
+       string test14 = "r3///y/b/O2//";
+       string test15 = "r2//b20////////////////////g03///r05/////y/";
+
+    assert(convertTune(test11, instructions, badBeat) == 0 && instructions == "g" && badBeat == -999);
+    assert(convertTune(test12, instructions, badBeat) == 0 && instructions == "xxx" && badBeat == -999);
+    assert(convertTune(test13, instructions, badBeat) == 0 && instructions == "ryGGGGGGYYYYYYYYYYRRRR" && badBeat == -999);
+    assert(convertTune(test14, instructions, badBeat) == 0 && instructions == "RRRybOO" && badBeat == -999);
+    assert(convertTune(test15, instructions, badBeat) == 0 && instructions == "RRBBBBBBBBBBBBBBBBBBBBGGGRRRRRy" && badBeat == -999);
+
+
+    
+    cerr << "All tests successful"<<endl;

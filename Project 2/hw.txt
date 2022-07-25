@@ -1,0 +1,52 @@
+James Wu
+4/8/22
+
+1.
+endlendl
+grendel
+
+2.
+Program takes a number from user input and prints that many "#" characters in an upwards diagonally right line (similar to a line on the xy-plane with positive slope).
+
+3.
+	#include <iostream>
+	using namespace std;
+
+	int main()
+	{
+	    int len;
+
+	    cout << "Enter a number: ";
+	    cin >> len;
+
+	    for (int i = 0; i < len; i++)
+	    {
+
+        		int j = i+1;
+
+        		while(j < len)
+		{
+            		cout << " ";
+            		j++;
+        		}
+
+		cout << "#" << endl;
+	    }
+	}
+
+4.
+
+	switch (month) {
+            case 6:
+                cout << "summer solstice";
+                break;
+            case 12:
+                cout << "winter solstice";
+                break;
+            case 3:
+            case 9:
+                cout << "equinox";
+                break;
+            default:
+                cout << "nothing special";
+        }

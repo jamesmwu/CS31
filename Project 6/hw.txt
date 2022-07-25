@@ -1,0 +1,280 @@
+James Wu
+CS31
+
+********** Project 6 **********
+
+1.
+A.
+
+int main()
+    {
+        int arr[3] = { 5, 10, 15 };
+        int* ptr = arr; //ptr points to first element in array
+
+        *ptr = 10;          // set arr[0] to 10
+        *(ptr + 1) = 20;      // set arr[1] to 20
+        ptr += 2;
+        ptr[0] = 30;        // set arr[2] to 30
+
+        while (ptr >= arr)
+        {
+            cout << ' ' << *ptr;    // print values
+            ptr--;
+
+        }
+    cout << endl;
+    }
+
+
+B.
+
+This function doesn't work as expected because pointers are passed by value, not by reference. This means that though the logic of the function is correct, you are altering a pointer value that won't be stored anywhere-- basically, the pointer ptr in main won't store the value assigned to parameter p in findDisorder. The way to fix this is to pass in the pointer by reference-- which you can do by setting the parameter of findDisorder to be "int*& p" instead of just "int* p".
+
+void findDisorder(int arr[], int n, int*& p)
+{
+        for (int k = 1; k < n; k++)
+        {
+            if (arr[k] < arr[k-1])
+            {
+                 p = arr + k;   //This points to 30 at position 4 doesn't it?? Wat
+                 return;
+            }
+        }
+    p = nullptr;
+}
+        
+
+int main()
+{
+    int nums[6] = { 10, 20, 20, 40, 30, 50 };
+    int* ptr = &nums[0];
+
+    findDisorder(nums, 6, ptr);
+    if (ptr == nullptr)
+        cout << "The array is ordered" << endl;
+    else
+    {
+            cout << "The disorder is at address " << ptr << endl;
+            cout << "It's at position " << ptr - nums << endl;
+            cout << "The item's value is " << *ptr << endl;
+    }
+}
+
+
+C. 
+
+The issue with the main function is that the pointer "p" is uninitialized. This means that the pointer isn't pointing to anything specific given by the programmer-- it's just pointing to some random space in memory. As a result, in the hypotenuse function which sets the object the pointer points at to the value of a hypotenuse, it doesn't know what to do (since the pointer might not point at something that can be assigned that value). A fix for this might be declaring a double variable earlier and making pointer "p" point to that instead of leaving it uninitialized.
+
+
+#include <iostream>
+    #include <cmath>
+    using namespace std;
+
+    void hypotenuse(double leg1, double leg2, double* resultPtr)
+    {
+        *resultPtr = sqrt(leg1*leg1 + leg2*leg2);
+    }
+
+    int main()
+    {
+        double hypo;
+        double* p = &hypo;
+        hypotenuse(1.5, 2.0, p);
+        cout << "The hypotenuse is " << *p << endl;
+    }
+
+D.
+The issue is that this program doesn't compare the characters in the C String. One way this program could be fixed is by using the strcmp function, which would be equal to 0 if the two C-Strings provided were a match. This could substitute the entire contents of the match function by replacing all the code inside and simply using the statement:
+
+return strcmp(str1, str2) == 0;
+
+However, assuming the programmer wants to compare corresponding characters to see if they are equivalent, you could do so by introducing an index variable "i" as such:
+
+
+// return true if two C strings are equal
+ bool match(const char str1[], const char str2[])
+ {
+     int i = 0;
+     
+     while (str1[i] != '\0'  &&  str2[i] != '\0')  // zero bytes at ends
+     {
+         if (str1[i] != str2[i])  // compare corresponding characters
+             return false;
+         i++;            // advance to the next character
+     }
+          
+     return str1[i] == '\0' && str2[i] == '\0';   // both ended at same time?
+ }
+
+ int main()
+ {
+     char a[10] = "Ding";
+     char b[10] = "Dong";
+
+     if (match(a,b))
+         cout << "They're the same!\n";
+     
+ }
+
+
+E.
+The program is incorrectly assigning the pointer "ptr" to a local variable "arr" that will no longer exist. Essentially, the local integer array variable "arr" is declared under the function computeSquares. When the function ends, the variable "arr" is then consequently destroyed to free up space in memory. However, ptr is being assigned to this variable! As a result, ptr is pointing to something that no longer exists in memory, and this screws up the intended results of the program.
+
+
+
+
+
+2.
+A.
+string* fp;
+
+B.
+string fish[5];
+
+C.
+fp = &fish[4];
+
+D.
+*fp = "yellowtail";
+
+E.
+*(fish + 3) = "salmon";
+
+F.
+fp -= 3;
+
+G.
+fp[1] = "carp";
+
+H.
+fp[0] = "smelt";
+
+I.
+bool d = fp == fish;
+
+J.
+bool b = *fp == *(fp+1);
+
+
+
+
+
+3.
+A.
+
+double computeAverage(const double* scores, int nScores)
+{
+    int i = 0;
+    double tot = 0;
+    while (i < nScores)
+    {
+        tot += *(scores + i);
+        i++;
+    }
+    return tot/nScores;
+}
+
+
+
+B.
+
+// This function searches through str for the character chr.
+// If the chr is found, it returns a pointer into str where
+// the character was first found, otherwise nullptr (not found).
+
+const char* findTheChar(const char* str, char chr)
+{
+    
+    for (int k = 0; *(str + k) != 0; k++)
+        if (*(str + k) == chr)
+            return (str + k);
+
+    return nullptr;
+}
+
+
+
+C.
+
+// This function searches through str for the character chr.
+// If the chr is found, it returns a pointer into str where
+// the character was first found, otherwise nullptr (not found).
+
+const char* findTheChar(const char* str, char chr)
+{
+    
+    for (str; *str != '\0'; str++)
+        if (*str == chr)
+            return str;
+
+    return nullptr;
+}
+
+
+
+
+4.
+The following steps is how this program is ultimately executed.
+
+First, the integer array "array" is initialized with 6 elements.
+
+Then, the pointer "ptr" is initialized with the minimart function, which returns the first pointer parameter if the object it points to is less than that of the second pointer parameter-- so in this case, "ptr" is initialized to point at position 2 of "array".
+
+The second element in ptr (at position [3]) is then set to 9, so the overall array is now {5, 3, 4, 9, 22, 19}.
+
+The pointer is then incremented by 2, so ptr now points to index [4] of "array".
+
+The object the pointer points to is then set to -1, so the overall array is {5, 3, 4, 9, -1, 19}.
+
+Then the object at index [1] (since array is array[0], increment that pointer by one to point at array[1]) is set to 79, so the array is now {5, 79, 4, 9, -1, 19}.
+
+The console then prints "diff=" followed by the address of the array at index 5, minus the pointer-- which still points to index [4] of the array. Now, when arrays are declared, a certain space in memory is allocated to them, with every following address being adjacent to one another. As a result, since these addresses are next to each other, the difference between the address of array at index 5 and the pointer to the array at index 4 will be 1. So the console prints (excluding quotes):
+
+"diff=1"
+
+Then, the swap1 function is called, which swaps the pointer parameters it holds to point at one another's objects. HOWEVER, since pointers are not automatically passed by reference and swap1 does not indicate this, nothing is changed in the main function (because local parameters "a" and "b" in swap1 are destroyed at the function's conclusion).
+
+Then, the swap2 function is called, which swaps the values of the OBJECTS that pointer parameters "a" and "b" point to. As a result, since the actual object reference is changed, the changes will be reflected in the main program. So because swap2 is called with pointer parameters at index 0 and 2 of "array", those indexes will swap. The array is now {4, 79, 5, 9, -1, 19}.
+
+The array is then printed, displaying:
+
+4
+79
+5
+9
+-1
+19
+
+SO in total, the overall output printed is:
+diff=1
+4
+79
+5
+9
+-1
+19
+
+
+
+5.
+//Remove all upper and lowercase "g" letters from the string
+void deleteG(char* ptr){
+    //Only one pointer local variable allowed, no square brackets, no <cstring> funcs
+    
+    for(ptr; *ptr != '\0'; ptr++){
+        if(*ptr == 'g' || *ptr == 'G'){
+            
+            //Move all elements in C-String to the left by one
+            for(char* index = ptr; *index != '\0'; index++){
+                *index = *(index + 1);
+            }
+            
+            //Catch case where there are consecutive g's.
+            ptr--;
+        }
+        
+    }
+    
+}
+
+

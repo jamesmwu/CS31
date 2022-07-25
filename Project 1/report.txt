@@ -1,0 +1,51 @@
+James Wu
+CS31
+4/1/22
+
+========== original.cpp ==========
+
+For the original.cpp file, I first tried inputting valid numbers. My first input was 10 students surveyed, with 8 preferring quarter system and 2 preferring semester. The result printed to terminal was that 80.0% prefer the quarter system and 20.0% prefer the semester system, and that more students prefer the quarter system to the semester system. This worked as expected. In an attempt to produce more nonsensical results, I ran the following numbers:
+
+20 students surveyed overall
+300 prefer quarter system
+-5 prefer semester system
+
+...which obviously would not mathematically make sense, but the result printed was that 1500.0% of students prefer the quarter system, -25.0% prefer the semester system, and more students prefer the quarter system. I tried this input as well:
+
+1 student surveyed overall
+-2 prefer quarter system
+-1 prefer semester system
+
+...which produced the result of -200.0% prefer quarter system and -100.0% prefer semester system, and more students prefer semester system to quarter system. Of course, this would not be physically possible-- you can't have a negative amount of students-- and also does not add up to the total.
+
+One last noteworthy combination I attempted was:
+
+100 students surveyed overall
+10 prefer quarter system
+10 prefer semester system
+
+...which yielded the result of 10.0% prefer quarter system, 10.0% prefer semester system, and-- interestingly-- "more students prefer the semester system to the quarter system". I found this strange on multiple levels-- firstly, its interesting that the total amount of student opinions did not add up to 100%, but more odd was the fact that the program stated more students preferred semester system to quarter system, when in fact the percents were equivalent. 
+
+========== logic_error.cpp ==========
+
+I introduced an error by swapping the location of the two variables "pctLikeSemester" and "pctLikeQuarter" in the cout statements on lines 29 and 30. Essentially, this caused the students who were preferred the semester system to actually be reported as liking the quarter system, and vice versa. So for example, normally if I did the input:
+
+10 students overall
+2 prefer quarter
+8 prefer semester
+
+You'd expect the result to be that 20% of students preferred quarter system, 80% semester system, and overall more students preferred semester system.
+
+However, under my logic error, the result will be reported as "80.0% prefer the quarter system. 20.0% prefer the semester system. More students prefer the quarter system to the semester system." ...which is not correct under what was inputted by the user. The compiler reported no error messages for this program.
+
+========== compile_error.cpp =========
+
+For this file, I introduced 3 compile errors into the code.
+
+The first is a variable declaration on line 11-- I did not end the variable declaration of "int preferQuarter" with a semicolon. As a result, the compiler error displayed "Expected ';' at end of declaration". 
+
+The second error I created was performing an incorrect operation for the specified variable name-- on line 22, I wrote "String pctLikeQuarter = 100.0 * preferQuarter / numberSurveyed;". To work properly, the variable "pctLikeQuarter" should be a double, but I changed it to a String variable. Of course, you cannot multiply or divide a word-- arithmetic operations require arithmetic numbers. So as a result, the compiler error displays "No viable conversion from 'double' to 'std::string' (aka 'basic_string<char, char_traits<char>, allocator<char>>')". It also displays a second error-- "Unknown type name 'String'; did you mean 'string'?" This second error is because I wrote "String", but since C++ is case-sensitive, declaring a variable as "String" is incorrect, as it should be "string". I found this interesting that the XCode compiler would recognize that the type declared was similar to another common one that it provided a recommendation.
+
+The last error I created was a misspelling of a command, similar to a typo someone might make. On line 29, the line should be "cout << endl;", which would provide a line space in the code. However, I rewrote this to read "gout << endl;". As a result, because gout is not an actual command, this created a compiler error that reads "Use of undeclared identifier 'gout'; did you mean 'cout'?". Again, here it's noticeable how the compiler recognizes that the misspelling is similar to the actual command and recommends the solution accordingly.
+
+Due to these compiler errors, this particular program will not successfully build and run.

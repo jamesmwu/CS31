@@ -1,0 +1,23 @@
+James Wu
+4/9/22
+
+Project 2 Report
+
+A.
+For this project, I found coding the logic of the water cost to be the most challenging aspect. Because the calculation varied between seasons and depending on whether the user had exceeded certain amounts of water used (in units of hundred cubic feet (hcf)), it took me some time to logically work through how the program could recognize the correct calculation for the appropriate situation. I solved this problem by opting to subtract the ceiling amounts of water (23 for high season and 15 for low season) from the amount of water the user indicated had been used. If this number was negative, the program could then recognize that the user used less than the specified amount, if the number was 0 it'd indicate the user used exactly the specified amount, and if the number was positive it'd demonstrate that the user had exceeded the HCF of water billed at the first tier. From this, I could then continue on with the rest of the calculation as needed.
+
+Additionally, it took me some time to review and understand the concept of how string and integer input worked in C++, as I was not used to using "cin.ignore(10000, '\n')" and had to familiarize myself with when it should be used. I eventually recognized that for a string input following an integer input, this code had to be written to deal with the extra newline that would not be read from the integer input.
+
+B.
+All test cases should be properly handled as described in the project specifications.
+
+Tests:
+Initial meter reading negative: (-1000, 2000, "James Wu", 8)
+Final meter reading less than initial reading: (8234, 1111, "Joe Bruin", 1)
+Empty string for customer name: (0, 200,"", 6)
+Month number not equal to or between 1 and 12: (60, 300, "Dr. Smallberg", 600)
+Multiple errors in input (empty string for name and invalid month number, should display first error detected (empty string for name)): (200, 10000, "", 62)
+Multiple errors in input (initial meter reading negative, final meter reading less than initial): (-300, -10000, "Phillip", 5)
+Multiple errors in input (final meter reading less than initial, invalid month): (2000, 1000, "James", -12)
+Multiple errors in input (all errors included): (-20, -1000, "", -42)
+Valid input: (60, 120, "Elon Musk", 10)
